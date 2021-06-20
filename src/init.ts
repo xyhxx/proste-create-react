@@ -5,7 +5,13 @@ import path from 'path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 import { spawn } from 'cross-spawn';
-import {createFolders, installPlugin, installCraco, initTailwindCss} from './dependencies/index';
+import {
+  createFolders,
+  installPlugin,
+  installCraco,
+  initTailwindCss,
+  initEslint,
+} from './dependencies/index';
 
 const cracoConfig: {[key:string]: any} = {};
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
@@ -109,11 +115,12 @@ const createApp = async function(name: string) {
 };
 
 const init = async function(name:string) {
-  let hadTailwind = false;
+  let hadTailwind = false, hadEslint = false;
   useYarn = canUseYarn();
   const result = await prompt(questions);
   ({useTypescript, usePresetFolder, plugins} = result);
   hadTailwind = plugins.includes(' TailwindCss');
+  hadEslint = plugins.includes(' Eslint');
   let files;
   if (usePresetFolder) {
     ({files} = await prompt(folderQuestion));
@@ -139,6 +146,9 @@ const init = async function(name:string) {
       },
     }`;
     initTailwindCss(root);
+  }
+  if (hadEslint) {
+    initEslint(root, useTypescript);
   }
   await installCraco(root, name, cracoConfig);
 };

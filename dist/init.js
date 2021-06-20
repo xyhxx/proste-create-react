@@ -94,11 +94,12 @@ const createApp = async function (name) {
     await run(root, name, originalPath);
 };
 const init = async function (name) {
-    let hadTailwind = false;
+    let hadTailwind = false, hadEslint = false;
     useYarn = index_1.canUseYarn();
     const result = await inquirer_1.prompt(questions);
     ({ useTypescript, usePresetFolder, plugins } = result);
     hadTailwind = plugins.includes(' TailwindCss');
+    hadEslint = plugins.includes(' Eslint');
     let files;
     if (usePresetFolder) {
         ({ files } = await inquirer_1.prompt(folderQuestion));
@@ -123,6 +124,9 @@ const init = async function (name) {
       },
     }`;
         index_2.initTailwindCss(root);
+    }
+    if (hadEslint) {
+        index_2.initEslint(root, useTypescript);
     }
     await index_2.installCraco(root, name, cracoConfig);
 };
