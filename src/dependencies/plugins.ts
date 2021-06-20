@@ -1,12 +1,12 @@
 import { pull } from 'lodash';
 import { installDependencies } from '../utils/index';
+
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
+const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
 
-const needInstallType = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
-
-export default async function(plguins:string[], useTypescript:boolean, useYarn:boolean, root:string) {
+export default async function(plguins:string[], useTypescript:boolean, useYarn:boolean, root:string):Promise<void> {
   const list = plguins.map(val => val.trim().toLowerCase());
-  const typeList = list.filter(val => needInstallType.includes(val)).map(val => `@types/${val}`);
+  const typeList = list.filter(val => needInstallTypes.includes(val)).map(val => `@types/${val}`);
 
   if (list.includes('eslint')) {
     list.push('eslint-plugin-react');
@@ -28,5 +28,15 @@ export default async function(plguins:string[], useTypescript:boolean, useYarn:b
     list.push(...typeList);
   }
 
-  await installDependencies(useYarn, list, root);
+  const child = await installDependencies(useYarn, list, root);
+
+  return new Promise((resolve, reject) => {
+    child.on('close', code => {
+      if (code !== 0) {
+        reject('plugins install error');
+        return;
+      }
+      resolve();
+    });
+  });
 }

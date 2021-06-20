@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const index_1 = require("../utils/index");
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
-const needInstallType = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
+const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
 async function default_1(plguins, useTypescript, useYarn, root) {
     const list = plguins.map(val => val.trim().toLowerCase());
-    const typeList = list.filter(val => needInstallType.includes(val)).map(val => `@types/${val}`);
+    const typeList = list.filter(val => needInstallTypes.includes(val)).map(val => `@types/${val}`);
     if (list.includes('eslint')) {
         list.push('eslint-plugin-react');
     }
@@ -23,6 +23,15 @@ async function default_1(plguins, useTypescript, useYarn, root) {
         }
         list.push(...typeList);
     }
-    await index_1.installDependencies(useYarn, list, root);
+    const child = await index_1.installDependencies(useYarn, list, root);
+    return new Promise((resolve, reject) => {
+        child.on('close', code => {
+            if (code !== 0) {
+                reject('plugins install error');
+                return;
+            }
+            resolve();
+        });
+    });
 }
 exports.default = default_1;

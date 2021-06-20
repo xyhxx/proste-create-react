@@ -11,6 +11,7 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const chalk_1 = __importDefault(require("chalk"));
 const cross_spawn_1 = require("cross-spawn");
 const index_2 = require("./dependencies/index");
+const process_1 = require("process");
 const cracoConfig = {};
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
 // need config tailwindcss
@@ -94,28 +95,29 @@ const createApp = async function (name) {
     await run(root, name, originalPath);
 };
 const init = async function (name) {
-    let hadTailwind = false, hadEslint = false;
-    useYarn = index_1.canUseYarn();
-    const result = await inquirer_1.prompt(questions);
-    ({ useTypescript, usePresetFolder, plugins } = result);
-    hadTailwind = plugins.includes(' TailwindCss');
-    hadEslint = plugins.includes(' Eslint');
-    let files;
-    if (usePresetFolder) {
-        ({ files } = await inquirer_1.prompt(folderQuestion));
-    }
-    const root = path_1.default.resolve(name);
-    // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
-    await createApp(name);
-    if (usePresetFolder && files) {
-        console.log(`create folders(${chalk_1.default.green(files)}) in ${chalk_1.default.green(root.concat('\\src'))}`);
-        index_2.createFolders(files, root);
-    }
-    if (plugins.length > 0) {
-        await index_2.installPlugin(plugins, useTypescript, useYarn, root);
-    }
-    if (hadTailwind) {
-        cracoConfig['style'] = `{
+    try {
+        let hadTailwind = false, hadEslint = false;
+        useYarn = index_1.canUseYarn();
+        const result = await inquirer_1.prompt(questions);
+        ({ useTypescript, usePresetFolder, plugins } = result);
+        hadTailwind = plugins.includes(' TailwindCss');
+        hadEslint = plugins.includes(' Eslint');
+        let files;
+        if (usePresetFolder) {
+            ({ files } = await inquirer_1.prompt(folderQuestion));
+        }
+        const root = path_1.default.resolve(name);
+        // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
+        await createApp(name);
+        if (usePresetFolder && files) {
+            console.log(`create folders(${chalk_1.default.green(files)}) in ${chalk_1.default.green(root.concat('\\src'))}`);
+            index_2.createFolders(files, root);
+        }
+        if (plugins.length > 0) {
+            await index_2.installPlugin(plugins, useTypescript, useYarn, root);
+        }
+        if (hadTailwind) {
+            cracoConfig['style'] = `{
       postcss: {
         plugins: [
           require('tailwindcss'),
@@ -123,11 +125,42 @@ const init = async function (name) {
         ],
       },
     }`;
-        index_2.initTailwindCss(root);
+            index_2.initTailwindCss(root);
+        }
+        if (hadEslint) {
+            index_2.initEslint(root, useTypescript);
+        }
+        await index_2.installCraco(root, name, cracoConfig);
+        const commandCli = useYarn ? 'yarn' : 'npm run';
+        console.log(`
+Success! Created ${chalk_1.default.green(name)} at ${chalk_1.default.green(root)}
+Inside that directory, you can run several commands:
+
+${chalk_1.default.green(commandCli)} start
+Starts the development server.
+
+${chalk_1.default.green(commandCli)} build
+Bundles the app into static files for production.
+
+${chalk_1.default.green(commandCli)} test
+Starts the test runner.
+
+${chalk_1.default.green(commandCli)} eject
+Removes this tool and copies build dependencies, configuration files
+and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+cd ${chalk_1.default.green(name)}
+${chalk_1.default.green(commandCli)} start
+
+Happy hacking!
+  `);
+        process_1.exit(0);
     }
-    if (hadEslint) {
-        index_2.initEslint(root, useTypescript);
+    catch (error) {
+        console.error(error);
+        process_1.exit(0);
     }
-    await index_2.installCraco(root, name, cracoConfig);
 };
 exports.init = init;

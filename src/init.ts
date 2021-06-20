@@ -12,6 +12,7 @@ import {
   initTailwindCss,
   initEslint,
 } from './dependencies/index';
+import { exit } from 'process';
 
 const cracoConfig: {[key:string]: any} = {};
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
@@ -115,29 +116,30 @@ const createApp = async function(name: string) {
 };
 
 const init = async function(name:string) {
-  let hadTailwind = false, hadEslint = false;
-  useYarn = canUseYarn();
-  const result = await prompt(questions);
-  ({useTypescript, usePresetFolder, plugins} = result);
-  hadTailwind = plugins.includes(' TailwindCss');
-  hadEslint = plugins.includes(' Eslint');
-  let files;
-  if (usePresetFolder) {
-    ({files} = await prompt(folderQuestion));
-  }
-  const root = path.resolve(name);
+  try {
+    let hadTailwind = false, hadEslint = false;
+    useYarn = canUseYarn();
+    const result = await prompt(questions);
+    ({useTypescript, usePresetFolder, plugins} = result);
+    hadTailwind = plugins.includes(' TailwindCss');
+    hadEslint = plugins.includes(' Eslint');
+    let files;
+    if (usePresetFolder) {
+      ({files} = await prompt(folderQuestion));
+    }
+    const root = path.resolve(name);
 
-  // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
-  await createApp(name);
-  if (usePresetFolder && files) {
-    console.log(`create folders(${chalk.green(files)}) in ${chalk.green(root.concat('\\src'))}`);
-    createFolders(files, root);
-  }
-  if (plugins.length > 0) {
-    await installPlugin(plugins, useTypescript, useYarn, root);
-  }
-  if (hadTailwind) {
-    cracoConfig['style'] = `{
+    // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
+    await createApp(name);
+    if (usePresetFolder && files) {
+      console.log(`create folders(${chalk.green(files)}) in ${chalk.green(root.concat('\\src'))}`);
+      createFolders(files, root);
+    }
+    if (plugins.length > 0) {
+      await installPlugin(plugins, useTypescript, useYarn, root);
+    }
+    if (hadTailwind) {
+      cracoConfig['style'] = `{
       postcss: {
         plugins: [
           require('tailwindcss'),
@@ -145,12 +147,44 @@ const init = async function(name:string) {
         ],
       },
     }`;
-    initTailwindCss(root);
+      initTailwindCss(root);
+    }
+    if (hadEslint) {
+      initEslint(root, useTypescript);
+    }
+    await installCraco(root, name, cracoConfig);
+    const commandCli = useYarn ? 'yarn' : 'npm run';
+    console.log(`
+Success! Created ${chalk.green(name)} at ${chalk.green(root)}
+Inside that directory, you can run several commands:
+
+${chalk.green(commandCli)} start
+Starts the development server.
+
+${chalk.green(commandCli)} build
+Bundles the app into static files for production.
+
+${chalk.green(commandCli)} test
+Starts the test runner.
+
+${chalk.green(commandCli)} eject
+Removes this tool and copies build dependencies, configuration files
+and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+cd ${chalk.green(name)}
+${chalk.green(commandCli)} start
+
+Happy hacking!
+  `);
+
+    exit(0);
+  } catch (error) {
+    console.error(error);
+
+    exit(0);
   }
-  if (hadEslint) {
-    initEslint(root, useTypescript);
-  }
-  await installCraco(root, name, cracoConfig);
 };
 
 export {init};

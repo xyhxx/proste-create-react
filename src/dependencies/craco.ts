@@ -15,11 +15,11 @@ export default function(root:string, name:string, json: {}):Promise<void> {
       }
       console.log(`Configuring ${chalk.green('craco.config.js')}...`);
 
-      let packageFile = readFile(name, 'package.json');
+      let packageFile = readFile(root, 'package.json');
       packageFile = packageFile.replace(new RegExp('react-scripts ', 'g'), 'craco ');
-      fs.writeFileSync(`${name}/package.json`, JSON.stringify(packageFile, null, 2));
+      fs.writeFileSync(`${root}/package.json`, JSON.stringify(JSON.parse(packageFile), null, 2));
       // fs.createFileSync(`${name}/craco.config.js`);
-      fs.writeFileSync(`${name}/craco.config.js`, `module.exports=${JSON.stringify(json, null, 2)}`);
+      fs.writeFileSync(`${root}/craco.config.js`, `module.exports = ${JSON.stringify(json, null, 2)}`);
       resolve();
     });
   });
