@@ -1,0 +1,38 @@
+{
+  "name": "proste-create-react",
+  "version": "1.0.0",
+  "description": "Create react app, which integrates information about other plug-ins and provides options when created",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "bin": {
+    "proste-create-react": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyhxx/proste-create-react.git"
+  },
+  "author": "XYH<603331487@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xyhxx/proste-create-react/issues"
+  },
+  "homepage": "https://github.com/xyhxx/proste-create-react#readme",
+  "dependencies": {
+    "@types/cross-spawn": "^6.0.2",
+    "@types/fs-extra": "^9.0.11",
+    "@types/inquirer": "^7.3.1",
+    "@types/lodash": "^4.14.170",
+    "@types/node": "^15.12.4",
+    "@typescript-eslint/parser": "^4.27.0",
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "cross-spawn": "^7.0.3",
+    "eslint": "^7.29.0",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.1.1",
+    "lodash": "^4.17.21",
+    "typescript": "^4.3.4"
+  }
+}
