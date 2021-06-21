@@ -30,7 +30,7 @@
 + <a href="https://github.com/animate-css/animate.css">Animate.css</a>
 + <a href="https://github.com/lodash/lodash">lodash</a>
 
-> 如果你在使用中遇到任何问题或者想要提出建议，欢迎到<a href="https://github.com/xyhxx/proste-create-react/issues">issues</a>中提出你的问题或者建议，我会在看到后尽快回复！！！
+> 如果你在使用中遇到任何问题或者想要提出建议，欢迎到<b><a href="https://github.com/xyhxx/proste-create-react/issues">  issues  </a></b>中提出你的问题或者建议，我会在看到后尽快回复！！！
 
 ```
 MIT License

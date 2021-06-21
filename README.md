@@ -36,7 +36,7 @@ If package needs type prompt for typescript installation, select use typescript 
 + <a href="https://github.com/animate-css/animate.css">Animate.css</a>
 + <a href="https://github.com/lodash/lodash">lodash</a>
 
-> If you have any problems or want to make suggestions, welcome to<a href="https://github.com/xyhxx/proste-create-react/issues">issues</a>write your question or suggestion, I will reply as soon as I see it!!!
+> If you have any problems or want to make suggestions, welcome to<b><a href="https://github.com/xyhxx/proste-create-react/issues">  issues  </a></b>write your question or suggestion, I will reply as soon as I see it!!!
 ```
 MIT License
 
