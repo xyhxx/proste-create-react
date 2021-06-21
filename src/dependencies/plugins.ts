@@ -2,9 +2,9 @@ import { pull } from 'lodash';
 import { installDependencies } from '../utils/index';
 
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
-const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
+const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash', 'tailwindcss'];
 
-export default async function(plguins:string[], useTypescript:boolean, useYarn:boolean, root:string):Promise<void> {
+export default async function(plguins:string[], useTypescript:boolean, useYarn:boolean, root:string, useExact:boolean):Promise<void> {
   const list = plguins.map(val => val.trim().toLowerCase());
   const typeList = list.filter(val => needInstallTypes.includes(val)).map(val => `@types/${val}`);
 
@@ -23,12 +23,12 @@ export default async function(plguins:string[], useTypescript:boolean, useYarn:b
 
   if (useTypescript) {
     if (list.includes('eslint')) {
-      list.push(...['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']);
+      list.push('@typescript-eslint/eslint-plugin', '@typescript-eslint/parser');
     }
     list.push(...typeList);
   }
 
-  const child = await installDependencies(useYarn, list, root);
+  const child = await installDependencies(useYarn, list, root, useExact);
 
   return new Promise((resolve, reject) => {
     child.on('close', code => {

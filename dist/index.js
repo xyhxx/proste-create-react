@@ -13,6 +13,7 @@ commander_1.default.version('1.0.0');
 commander_1.default
     .arguments('<project-name>')
     .usage(`${chalk_1.default.green('<project-name>')}`)
+    .option('--use-exact', 'use exact in npm or yarn (in yarn is \'--exact\', in npm is \'--save-exact\')')
     .action(init_1.init);
 // 解析命令行参数
 commander_1.default.parse(process.argv);

@@ -3,11 +3,13 @@ import path from 'path';
 import chalk from 'chalk';
 
 export default function(root:string, useTypescript:boolean) {
+  console.log();
   console.log(`init ${chalk.green('eslint')}`);
+  console.log();
 
   let config;
   const ignore = `/dist/*
-  /node_modules/*`;
+/node_modules/*`;
 
   if (useTypescript) {
     config = {
@@ -53,7 +55,7 @@ export default function(root:string, useTypescript:boolean) {
   }
 
   fs.writeFileSync(
-    path.join(root, '.esling.json'),
+    path.join(root, '.eslintrc.json'),
     JSON.stringify(config, null, 2),
   );
   fs.writeFileSync(

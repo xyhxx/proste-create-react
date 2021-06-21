@@ -15,7 +15,7 @@ const process_1 = require("process");
 const cracoConfig = {};
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
 // need config tailwindcss
-const pluginsList = ' Eslint, TailwindCss, MobX, react-router-dom, react-router-config, redux, react-redux, axios, Animate.css, lodash';
+const pluginsList = ' Eslint, TailwindCss, MobX, react-router-dom, react-router-config, redux, react-redux, @rematch/core, axios, Animate.css, lodash';
 const questions = [
     {
         type: 'confirm',
@@ -35,12 +35,12 @@ const questions = [
     },
 ];
 const folderQuestion = [{
-        message: 'Please enter the folder you need to create,use\',\'to separate, like(pages,utils,functions,route,assets,styles,controllers).',
+        message: 'Please enter the folder you need to create,use\',\'to separate, like(pages,utils,...).',
         type: 'input',
-        default: 'pages,utils,functions,route,assets,styles,controllers',
+        default: 'pages,utils,functions,routes,assets,styles,controllers',
         name: 'files',
     }];
-let useTypescript, usePresetFolder, useYarn, plugins;
+let useTypescript, usePresetFolder, useYarn, plugins, useExact = false;
 const executeNodeScript = function (cwd, data, source) {
     return new Promise(resolve => {
         const child = cross_spawn_1.spawn(process.execPath, ['-e', source, '--', JSON.stringify(data)], { cwd, stdio: 'inherit' });
@@ -49,17 +49,7 @@ const executeNodeScript = function (cwd, data, source) {
 };
 const install = async function install(root, allDependencies) {
     return new Promise((resolve, reject) => {
-        // let command:string, args:string[];
-        // if (useYarn) {
-        //   command = 'yarn';
-        //   args = ['add', '--exact', ...allDependencies, '--cwd', root];
-        // } else {
-        //   command = 'npm';
-        //   args = ['install', '--save', '--save-exact', '--loglevel', 'error', ...allDependencies];
-        // }
-        // console.log(`use ${chalk.green(command)} install ${allDependencies.map(val => chalk.green(val)).join('、')}`);
-        // const child = spawn(command, args, {'stdio': 'inherit'});
-        const child = index_1.installDependencies(useYarn, allDependencies, root);
+        const child = index_1.installDependencies(useYarn, allDependencies, root, useExact);
         child.on('close', code => {
             if (code !== 0) {
                 reject('react install error');
@@ -74,6 +64,7 @@ const run = async function (root, name, originalPath) {
     const allDependencies = ['react', 'react-dom', scriptName, templateName];
     console.log('install packages...');
     await install(root, allDependencies);
+    console.log();
     const data = [root, name, true, originalPath, templateName], source = `
           var init = require('react-scripts/scripts/init.js');
           init.apply(null, JSON.parse(process.argv[1]));
@@ -84,6 +75,7 @@ const createApp = async function (name) {
     const root = path_1.default.resolve(name);
     fs_extra_1.default.ensureDirSync(root);
     console.log(`create project in ${chalk_1.default.green(root)}`);
+    console.log();
     const projectPackage = {
         name,
         version: '0.1.0',
@@ -94,7 +86,8 @@ const createApp = async function (name) {
     process.chdir(root);
     await run(root, name, originalPath);
 };
-const init = async function (name) {
+const init = async function (name, options) {
+    useExact = options['useExact'] ?? false;
     try {
         let hadTailwind = false, hadEslint = false;
         useYarn = index_1.canUseYarn();
@@ -107,55 +100,58 @@ const init = async function (name) {
             ({ files } = await inquirer_1.prompt(folderQuestion));
         }
         const root = path_1.default.resolve(name);
-        // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
         await createApp(name);
         if (usePresetFolder && files) {
+            console.log();
             console.log(`create folders(${chalk_1.default.green(files)}) in ${chalk_1.default.green(root.concat('\\src'))}`);
             index_2.createFolders(files, root);
+            console.log();
         }
         if (plugins.length > 0) {
-            await index_2.installPlugin(plugins, useTypescript, useYarn, root);
+            await index_2.installPlugin(plugins, useTypescript, useYarn, root, useExact);
         }
         if (hadTailwind) {
-            cracoConfig['style'] = `{
-      postcss: {
-        plugins: [
-          require('tailwindcss'),
-          require('autoprefixer'),
-        ],
-      },
-    }`;
+            cracoConfig['style'] = {
+                'postcss': {
+                    'plugins': [
+                        '${require(\'tailwindcss\')}',
+                        '${require(\'autoprefixer\')}',
+                    ],
+                },
+            };
             index_2.initTailwindCss(root);
         }
         if (hadEslint) {
             index_2.initEslint(root, useTypescript);
         }
-        await index_2.installCraco(root, name, cracoConfig);
+        await index_2.installCraco(root, name, cracoConfig, useExact);
         const commandCli = useYarn ? 'yarn' : 'npm run';
+        console.log();
         console.log(`
-Success! Created ${chalk_1.default.green(name)} at ${chalk_1.default.green(root)}
-Inside that directory, you can run several commands:
+  Success! Created ${chalk_1.default.hex('#0097a7')(name)} at ${chalk_1.default.hex('#0097a7')(root)}
+  Inside that directory, you can run several commands:
 
-${chalk_1.default.green(commandCli)} start
-Starts the development server.
+  ${chalk_1.default.hex('#0097a7')(commandCli)} start
+  Starts the development server.
 
-${chalk_1.default.green(commandCli)} build
-Bundles the app into static files for production.
+  ${chalk_1.default.hex('#0097a7')(commandCli)} build
+  Bundles the app into static files for production.
 
-${chalk_1.default.green(commandCli)} test
-Starts the test runner.
+  ${chalk_1.default.hex('#0097a7')(commandCli)} test
+  Starts the test runner.
 
-${chalk_1.default.green(commandCli)} eject
-Removes this tool and copies build dependencies, configuration files
-and scripts into the app directory. If you do this, you can’t go back!
+  ${chalk_1.default.hex('#0097a7')(commandCli)} eject
+  Removes this tool and copies build dependencies, configuration files
+  and scripts into the app directory. If you do this, you can’t go back!
 
-We suggest that you begin by typing:
+  We suggest that you begin by typing:
 
-cd ${chalk_1.default.green(name)}
-${chalk_1.default.green(commandCli)} start
+  cd ${chalk_1.default.hex('#0097a7')(name)}
+  ${chalk_1.default.hex('#0097a7')(commandCli)} start
 
-Happy hacking!
+  Happy hacking!
   `);
+        console.log();
         process_1.exit(0);
     }
     catch (error) {

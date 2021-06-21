@@ -14,10 +14,10 @@ import {
 } from './dependencies/index';
 import { exit } from 'process';
 
-const cracoConfig: {[key:string]: any} = {};
+const cracoConfig:{[key:string]: any} = {};
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
 // need config tailwindcss
-const pluginsList = ' Eslint, TailwindCss, MobX, react-router-dom, react-router-config, redux, react-redux, axios, Animate.css, lodash';
+const pluginsList = ' Eslint, TailwindCss, MobX, react-router-dom, react-router-config, redux, react-redux, @rematch/core, axios, Animate.css, lodash';
 const questions:QuestionCollection[] = [
   {
     type: 'confirm',
@@ -37,12 +37,12 @@ const questions:QuestionCollection[] = [
   },
 ];
 const folderQuestion:QuestionCollection[] = [{
-  message: 'Please enter the folder you need to create,use\',\'to separate, like(pages,utils,functions,route,assets,styles,controllers).',
+  message: 'Please enter the folder you need to create,use\',\'to separate, like(pages,utils,...).',
   type: 'input',
-  default: 'pages,utils,functions,route,assets,styles,controllers',
+  default: 'pages,utils,functions,routes,assets,styles,controllers',
   name: 'files',
 }];
-let useTypescript:boolean, usePresetFolder:boolean, useYarn:boolean, plugins:string[];
+let useTypescript:boolean, usePresetFolder:boolean, useYarn:boolean, plugins:string[], useExact:boolean = false;
 
 const executeNodeScript = function(cwd:string, data:(string | boolean)[], source:string) {
   return new Promise(resolve => {
@@ -54,20 +54,7 @@ const executeNodeScript = function(cwd:string, data:(string | boolean)[], source
 
 const install = async function install(root:string, allDependencies:string[]):Promise<void> {
   return new Promise((resolve, reject) => {
-    // let command:string, args:string[];
-    // if (useYarn) {
-    //   command = 'yarn';
-    //   args = ['add', '--exact', ...allDependencies, '--cwd', root];
-    // } else {
-    //   command = 'npm';
-    //   args = ['install', '--save', '--save-exact', '--loglevel', 'error', ...allDependencies];
-    // }
-
-    // console.log(`use ${chalk.green(command)} install ${allDependencies.map(val => chalk.green(val)).join('、')}`);
-
-    // const child = spawn(command, args, {'stdio': 'inherit'});
-
-    const child = installDependencies(useYarn, allDependencies, root);
+    const child = installDependencies(useYarn, allDependencies, root, useExact);
     child.on('close', code => {
       if (code !== 0) {
         reject('react install error');
@@ -85,6 +72,8 @@ const run = async function(root:string, name:string, originalPath:string) {
 
   console.log('install packages...');
   await install(root, allDependencies);
+  console.log();
+
   const data = [root, name, true, originalPath, templateName],
         source = `
           var init = require('react-scripts/scripts/init.js');
@@ -98,7 +87,7 @@ const createApp = async function(name: string) {
   fs.ensureDirSync(root);
 
   console.log(`create project in ${chalk.green(root)}`);
-
+  console.log();
   const projectPackage = {
     name,
     version: '0.1.0',
@@ -115,7 +104,8 @@ const createApp = async function(name: string) {
   await run(root, name, originalPath);
 };
 
-const init = async function(name:string) {
+const init = async function(name:string, options: any) {
+  useExact = options['useExact'] ?? false;
   try {
     let hadTailwind = false, hadEslint = false;
     useYarn = canUseYarn();
@@ -129,56 +119,58 @@ const init = async function(name:string) {
     }
     const root = path.resolve(name);
 
-    // console.log(useTypescript, useTailwind, initAlias, usePresetConfig, usePresetFolder, useYarn, plugins);
     await createApp(name);
     if (usePresetFolder && files) {
+      console.log();
       console.log(`create folders(${chalk.green(files)}) in ${chalk.green(root.concat('\\src'))}`);
       createFolders(files, root);
+      console.log();
     }
     if (plugins.length > 0) {
-      await installPlugin(plugins, useTypescript, useYarn, root);
+      await installPlugin(plugins, useTypescript, useYarn, root, useExact);
     }
     if (hadTailwind) {
-      cracoConfig['style'] = `{
-      postcss: {
-        plugins: [
-          require('tailwindcss'),
-          require('autoprefixer'),
-        ],
-      },
-    }`;
+      cracoConfig['style'] = {
+        'postcss': {
+          'plugins': [
+            '${require(\'tailwindcss\')}',
+            '${require(\'autoprefixer\')}',
+          ],
+        },
+      };
       initTailwindCss(root);
     }
     if (hadEslint) {
       initEslint(root, useTypescript);
     }
-    await installCraco(root, name, cracoConfig);
+    await installCraco(root, name, cracoConfig, useExact);
     const commandCli = useYarn ? 'yarn' : 'npm run';
+    console.log();
     console.log(`
-Success! Created ${chalk.green(name)} at ${chalk.green(root)}
-Inside that directory, you can run several commands:
+  Success! Created ${chalk.hex('#0097a7')(name)} at ${chalk.hex('#0097a7')(root)}
+  Inside that directory, you can run several commands:
 
-${chalk.green(commandCli)} start
-Starts the development server.
+  ${chalk.hex('#0097a7')(commandCli)} start
+  Starts the development server.
 
-${chalk.green(commandCli)} build
-Bundles the app into static files for production.
+  ${chalk.hex('#0097a7')(commandCli)} build
+  Bundles the app into static files for production.
 
-${chalk.green(commandCli)} test
-Starts the test runner.
+  ${chalk.hex('#0097a7')(commandCli)} test
+  Starts the test runner.
 
-${chalk.green(commandCli)} eject
-Removes this tool and copies build dependencies, configuration files
-and scripts into the app directory. If you do this, you can’t go back!
+  ${chalk.hex('#0097a7')(commandCli)} eject
+  Removes this tool and copies build dependencies, configuration files
+  and scripts into the app directory. If you do this, you can’t go back!
 
-We suggest that you begin by typing:
+  We suggest that you begin by typing:
 
-cd ${chalk.green(name)}
-${chalk.green(commandCli)} start
+  cd ${chalk.hex('#0097a7')(name)}
+  ${chalk.hex('#0097a7')(commandCli)} start
 
-Happy hacking!
+  Happy hacking!
   `);
-
+    console.log();
     exit(0);
   } catch (error) {
     console.error(error);

@@ -10,6 +10,7 @@ program.version('1.0.0');
 program
   .arguments('<project-name>')
   .usage(`${chalk.green('<project-name>')}`)
+  .option('--use-exact', 'use exact in npm or yarn (in yarn is \'--exact\', in npm is \'--save-exact\')')
   .action(init);
 
 // 解析命令行参数

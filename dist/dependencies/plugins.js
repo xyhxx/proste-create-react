@@ -4,7 +4,7 @@ const lodash_1 = require("lodash");
 const index_1 = require("../utils/index");
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
 const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
-async function default_1(plguins, useTypescript, useYarn, root) {
+async function default_1(plguins, useTypescript, useYarn, root, useExact) {
     const list = plguins.map(val => val.trim().toLowerCase());
     const typeList = list.filter(val => needInstallTypes.includes(val)).map(val => `@types/${val}`);
     if (list.includes('eslint')) {
@@ -19,11 +19,11 @@ async function default_1(plguins, useTypescript, useYarn, root) {
     }
     if (useTypescript) {
         if (list.includes('eslint')) {
-            list.push(...['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']);
+            list.push('@typescript-eslint/eslint-plugin', '@typescript-eslint/parser');
         }
         list.push(...typeList);
     }
-    const child = await index_1.installDependencies(useYarn, list, root);
+    const child = await index_1.installDependencies(useYarn, list, root, useExact);
     return new Promise((resolve, reject) => {
         child.on('close', code => {
             if (code !== 0) {
