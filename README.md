@@ -13,10 +13,6 @@ When creating react project, you can choose to install some third-party plug-ins
 
 
   npx proste-create-react <name> [--use-exact]
-
-  or
-
-  yarn create proste-create-react <name> [--use-exact]
 ```
 
 ##  Joined packages

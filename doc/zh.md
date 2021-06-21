@@ -9,10 +9,6 @@
 
 
   npx proste-create-react <name> [--use-exact]
-
-  or
-
-  yarn create proste-create-react <name> [--use-exact]
 ```
 
 ##  已加入的packages
