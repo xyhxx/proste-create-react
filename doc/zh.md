@@ -14,6 +14,7 @@
 ##  已加入的packages
 如果package需要对typescript安装类型提示，在选择use typescript后会安装对应的types，eslint也会安装对应的typescript插件。
 
++ <a href="https://github.com/gsoft-inc/craco">craco</a>
 + <a href="https://github.com/eslint/eslint">Eslint</a>
 + <a href="https://github.com/tailwindlabs/tailwindcss">TailwindCss</a>
 + <a href="https://github.com/mobxjs/mobx">MobX</a>

@@ -20,6 +20,7 @@ When creating react project, you can choose to install some third-party plug-ins
 If package needs type prompt for typescript installation, select use typescript to install the corresponding types, and eslint will also install the corresponding typescript plug-in.
 
 
++ <a href="https://github.com/gsoft-inc/craco">craco</a>
 + <a href="https://github.com/eslint/eslint">Eslint</a>
 + <a href="https://github.com/tailwindlabs/tailwindcss">TailwindCss</a>
 + <a href="https://github.com/mobxjs/mobx">MobX</a>

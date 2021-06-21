@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const index_1 = require("../utils/index");
 // @types/react-router-dom @types/react-router-config @types/react-redux @types/lodash
-const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash'];
+const needInstallTypes = ['react-router-dom', 'react-router-config', 'react-redux', 'lodash', 'tailwindcss'];
 async function default_1(plguins, useTypescript, useYarn, root, useExact) {
     const list = plguins.map(val => val.trim().toLowerCase());
     const typeList = list.filter(val => needInstallTypes.includes(val)).map(val => `@types/${val}`);
