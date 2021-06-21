@@ -1,9 +1,8 @@
 # proste-create-react
 
-When creating react project, you can choose to install some third-party plug-ins at the same time, or create the folder in the project in advance (all the folders will be created in src).react template use<a href="https://github.com/facebook/create-react-app/tree/master/packages/cra-template">cra-template</a>, <a href="https://github.com/facebook/create-react-app/tree/master/packages/cra-template-typescript">cra-template-typescript</a>和<a href="https://github.com/facebook/create-react-app/tree/master/packages/react-scripts">react-scripts</a>。The installation uses a simple way to achieve create react app, and does not directly use create react app to create projects. It has tried to create and develop projects, and no problems have been found. If there are problems in the future, we will try to change the creation project to create it with create react app.
+在创建react项目时可选择同时安装一些第三方插件，或者预先创建项目中的文件夹（所有的文件夹都会在src中创建）。react模板使用<a href="https://github.com/facebook/create-react-app/tree/master/packages/cra-template">cra-template</a>, <a href="https://github.com/facebook/create-react-app/tree/master/packages/cra-template-typescript">cra-template-typescript</a>和<a href="https://github.com/facebook/create-react-app/tree/master/packages/react-scripts">react-scripts</a>。安装使用简易的方式实现create-react-app, 未直接使用create-react-app进行创建项目，尝试过创建和开发项目，未发现问题。如果日后出现问题会尝试将创建项目修改为使用create-react-app创建。
 
-
-##  Usage
+##  使用
 
 ```
   npx proste-create-react project_name
@@ -16,10 +15,8 @@ When creating react project, you can choose to install some third-party plug-ins
   yarn create proste-create-react <name> [--use-exact]
 ```
 
-##  Joined packages
-
-If package needs type prompt for typescript installation, select use typescript to install the corresponding types, and eslint will also install the corresponding typescript plug-in.
-
+##  已加入的packages
+如果package需要对typescript安装类型提示，在选择use typescript后会安装对应的types，eslint也会安装对应的typescript插件。
 
 + <a href="https://github.com/eslint/eslint">Eslint</a>
 + <a href="https://github.com/tailwindlabs/tailwindcss">TailwindCss</a>
@@ -33,7 +30,8 @@ If package needs type prompt for typescript installation, select use typescript 
 + <a href="https://github.com/animate-css/animate.css">Animate.css</a>
 + <a href="https://github.com/lodash/lodash">lodash</a>
 
-> If you have any problems or want to make suggestions, welcome to<a href="https://github.com/xyhxx/proste-create-react/issues">issues</a>write your question or suggestion, I will reply as soon as I see it!!!
+> 如果你在使用中遇到任何问题或者想要提出建议，欢迎到<a href="https://github.com/xyhxx/proste-create-react/issues">issues</a>中提出你的问题或者建议，我会在看到后尽快回复！！！
+
 ```
 MIT License
 
